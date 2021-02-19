@@ -51,7 +51,7 @@ app.controller("bookCtrl", function ($scope, $http) {
 
     $scope.getAllBook = function () {
         $http({
-            url: 'http://localhost:8080/api/book?page=' + $scope.pageable.pageNumber + '&size=5',
+            url: 'http://localhost:8081/api/v1/book?page=' + $scope.pageable.pageNumber + '&size=5',
             method: 'GET'
         }).then(function (response) {
             $scope.books = response.data.content;
@@ -67,7 +67,7 @@ app.controller("bookCtrl", function ($scope, $http) {
 
     $scope.deleteBookByIdRequest = function (bookId) {
         $http({
-            url: 'http://localhost:8080/api/book/' + bookId,
+            url: 'http://localhost:8081/api/v1/book' + bookId,
             method: 'DELETE'
         }).then(function () {
             $scope.getAllBook();
@@ -79,7 +79,7 @@ app.controller("bookCtrl", function ($scope, $http) {
         let request = '';
         let method = '';
         if ($scope.editFields.id === 0) {
-            request = 'http://localhost:8080/api/book/';
+            request = 'http://localhost:8081/api/v1/book';
             method = 'POST';
             data = {
                 name: $scope.editFields.name,
@@ -87,7 +87,7 @@ app.controller("bookCtrl", function ($scope, $http) {
                 description: $scope.editFields.description
             };
         } else {
-            request = 'http://localhost:8080/api/book/' + $scope.editFields.id;
+            request = 'http://localhost:8081/api/v1/book' + $scope.editFields.id;
             method = 'PUT';
             data = {
                 id: $scope.editFields.id,

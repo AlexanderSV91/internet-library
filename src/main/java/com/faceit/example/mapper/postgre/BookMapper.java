@@ -2,7 +2,7 @@ package com.faceit.example.mapper.postgre;
 
 import com.faceit.example.dto.request.postgre.BookRequest;
 import com.faceit.example.dto.response.postgre.BookResponse;
-import com.faceit.example.model.postgre.BookModel;
+import com.faceit.example.tables.records.BooksRecord;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -12,13 +12,13 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface BookMapper {
 
-    BookResponse bookModelToBookResponse(BookModel book);
+    BookResponse bookRecordToBookResponse(BooksRecord book);
 
     @Mapping(target = "id", ignore = true)
-    BookModel bookRequestToBookModel(BookRequest bookRequest);
+    BooksRecord bookRequestToBookRecord(BookRequest bookRequest);
 
-    List<BookResponse> booksModelToBooksResponse(List<BookModel> books);
+    List<BookResponse> booksRecordToBooksResponse(List<BooksRecord> books);
 
     @Mapping(target = "id", ignore = true)
-    BookModel updateBookModelFromBookRequest(BookRequest bookRequest, @MappingTarget BookModel book);
+    BooksRecord updateBookRecordFromBookRequest(BookRequest bookRequest, @MappingTarget BooksRecord book);
 }
