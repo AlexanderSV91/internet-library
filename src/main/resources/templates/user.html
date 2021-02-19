@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{nav.user}">User</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+</head>
+<style>@import url("../css/style.css");</style>
+<script  src="../js/user.js"></script>
+<body ng-app="userApp" ng-controller="userCtrl">
+<div class="row">
+    <div class="col-11">
+        <nav class="nav nav-pills nav-fill">
+            <a class="nav-item nav-link" href="http://localhost:8080/orderbook" th:text="#{nav.orderBook}">Order Book</a>
+            <a class="nav-item nav-link" href="http://localhost:8080/book" th:text="#{nav.book}">Book</a>
+            <a class="nav-item nav-link active disabled"
+               href="http://localhost:8080/user" th:text="#{nav.user}">User</a>
+        </nav>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-danger" href="http://localhost:8080/logout" role="button">
+            <img
+                    src="https://cdn1.iconfinder.com/data/icons/essentials-pack/96/logout_close_sign_out_exit_access-512.png"
+                    width="20"></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <table class="table table-striped table-bordered table-hover">
+            <tr>
+                <th th:text="#{user.username1}">USERNAME</th>
+                <th th:text="#{user.firstName}">FIRST NAME</th>
+                <th th:text="#{user.lastName}">LAST NAME</th>
+                <th th:text="#{user.email}">EMAIL</th>
+                <th th:text="#{user.age}">AGE</th>
+                <th>
+                    <button class="btn btn-success" data-toggle="modal" data-target="#modal"
+                            ng-click="changeTitleModal('Add User')">
+                        <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/0/06/OOjs_UI_icon_add.svg"
+                                width="20">
+                    </button>
+                </th>
+            </tr>
+            <tr ng-repeat="user in users">
+                <td>{{user.userName}}</td>
+                <td>{{user.firstName}}</td>
+                <td>{{user.lastName}}</td>
+                <td>{{user.email}}</td>
+                <td>{{user.age}}</td>
+                <td>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#modal"
+                            ng-click="fillFieldsModal(user); changeTitleModal('Edit User')">
+                        <img
+                                src="https://image.flaticon.com/icons/png/512/84/84380.png"
+                                width="20">
+                    </button>
+                    <button class="btn btn-danger" ng-click="deleteUserByIdRequest(user.id)">
+                        <img
+                                src="https://image.flaticon.com/icons/png/512/61/61848.png"
+                                width="20">
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog"
+     aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">{{titleModal}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <div class="input-group mb-1">
+                        <input type="text" class="form-control" th:placeholder="#{user.username1}"
+                               ng-model="editFields.userName">
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="password" class="form-control" th:placeholder="#{user.password}"
+                               ng-model="editFields.password">
+                    </div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" th:placeholder="#{user.firstName}"
+                               ng-model="editFields.firstName">
+                    </div>
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control" th:placeholder="#{user.lastName}"
+                               ng-model="editFields.lastName">
+                    </div>
+                    <div class="input-group mb-4">
+                        <input type="text" class="form-control" th:placeholder="#{user.email}"
+                               ng-model="editFields.email">
+                    </div>
+                    <div class="input-group mb-5">
+                        <input type="text" class="form-control" th:placeholder="#{user.age}"
+                               ng-model="editFields.age">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{nav.close}">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        ng-click="saveUser()" th:text="#{nav.save}">Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

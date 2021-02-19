@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="container-fluid text-center">
+    <h1 th:text="#{login.greeting}"></h1>
+
+    <form th:action="@{/login}" method="post" style="max-width: 350px; margin: 0 auto;">
+        <div th:if="${param.logout}">
+            <p class="text-warning" th:text="#{login.logged}"></p>
+        </div>
+        <div class="border border-secondary p-3 rounded">
+            <p th:text="#{login.login}"></p>
+            <p>
+                <input type="text" name="username" class="form-control"
+                       th:placeholder="#{login.username}" required autofocus/>
+            </p>
+            <p>
+                <input type="password" name="password" class="form-control"
+                       th:placeholder="#{login.password}" required/>
+            </p>
+            <p>
+                <input type="submit" th:value="#{login.login}" class="btn btn-primary"/>
+            </p>
+            <p><a href="http://localhost:8080/registration" th:text="#{login.registration}"></a></p>
+        </div>
+    </form>
+
+    <br/><br/>
+
+    <span th:text="#{lang.change}"></span>:
+    <select id="locales">
+        <option value=""></option>
+        <option value="en" th:text="#{lang.en}"></option>
+        <option value="ru" th:text="#{lang.ru}"></option>
+    </select>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        $("#locales").change(function () {
+            var selectedOption = $('#locales').val();
+            if (selectedOption !== '') {
+                console.log(selectedOption);
+                window.location.replace('login?lang=' + selectedOption);
+            }
+        });
+    });
+</script>
+</html>

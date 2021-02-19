@@ -10,4 +10,24 @@ public class WebController {
     public String book() {
         return "book";
     }
+
+    @GetMapping("/user")
+    public String user() {
+        return "user";
+    }
+
+    @GetMapping(value = {"/", "/login"})
+    public String login() {
+        return "login";
+    }
+
+    @GetMapping("/registration")
+    public String registration() {
+        return "registration";
+    }
+
+    @GetMapping("/confirm/**")
+    public String confirm() {
+        return "successfulPage";
+    }
 }

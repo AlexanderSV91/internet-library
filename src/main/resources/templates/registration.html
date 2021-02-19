@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+</head>
+<script type="text/javascript" src="../js/registration.js"></script>
+<body ng-app="registrationApp" ng-controller="registrationCtrl">
+
+<div class="row">
+    <form style="max-width: 600px; width: 400px; margin: 0 auto;">
+        <div class="border border-secondary p-3 rounded">
+            <p th:text="#{registration.registration}"></p>
+            <p>
+                <label th:text="#{registration.username}"></label>
+                <input type="text" name="username" class="form-control" th:placeholder="#{registration.username}" ng-model="editFields.userName" required autofocus/>
+            </p>
+            <p>
+                <label th:text="#{registration.password}"></label>
+                <input type="password" name="password" class="form-control" th:placeholder="#{registration.password}" ng-model="editFields.password" required />
+            </p>
+            <p>
+                <label th:text="#{registration.confirmPassword}"></label>
+                <input type="password" name="confirmPassword" class="form-control" th:placeholder="#{registration.confirmPassword}" ng-model="editFields.confirmPassword" required />
+            </p>
+            <p>
+                <label th:text="#{registration.firstName}"></label>
+                <input type="text" name="username" class="form-control" th:placeholder="#{registration.firstName}" ng-model="editFields.firstName" required />
+            </p>
+            <p>
+                <label th:text="#{registration.lastName}"></label>
+                <input type="text" name="username" class="form-control" th:placeholder="#{registration.lastName}" ng-model="editFields.lastName" required />
+            </p>
+            <p>
+                <label th:text="#{registration.email}"></label>
+                <input type="email" name="email" class="form-control" th:placeholder="#{registration.email}" ng-model="editFields.email" required />
+            </p>
+            <p>
+                <label th:text="#{registration.age}"></label>
+                <input type="text" name="age" class="form-control" th:placeholder="#{registration.age}" ng-model="editFields.age" required/>
+            </p>
+            <p>
+                <input type="submit" th:value="#{registration.registration}" class="btn btn-primary" ng-click="saveUser()"/>
+            </p>
+        </div>
+
+        <br/><br/>
+
+        <span th:text="#{lang.change}"></span>:
+        <select id="locales">
+            <option value=""></option>
+            <option value="en" th:text="#{lang.en}"></option>
+            <option value="ru" th:text="#{lang.ru}"></option>
+        </select>
+    </form>
+</div>
+</body>
+<script>
+    $(document).ready(function () {
+        $("#locales").change(function () {
+            var selectedOption = $('#locales').val();
+            if (selectedOption !== '') {
+                console.log(selectedOption);
+                window.location.replace('registration?lang=' + selectedOption);
+            }
+        });
+    });
+</script>
+</html>
