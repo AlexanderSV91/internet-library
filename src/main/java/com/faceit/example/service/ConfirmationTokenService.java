@@ -2,22 +2,22 @@ package com.faceit.example.service;
 
 
 import com.faceit.example.model.enumeration.TokenStatus;
-import com.faceit.example.tables.ConfirmationTokens;
+import com.faceit.example.tables.records.ConfirmationTokensRecord;
 import com.faceit.example.tables.records.UsersRecord;
 
 import java.util.List;
 
 public interface ConfirmationTokenService {
 
-    void addConfirmationToken(UsersRecord user);
+    void addConfirmationToken(UsersRecord newUser);
 
     TokenStatus findByToken(String token);
 
-    ConfirmationTokens getConfirmationTokenById(long id);
+    ConfirmationTokensRecord getConfirmationTokenById(long id);
 
     boolean existsByToken(String token);
 
-    ConfirmationTokens updateConfirmationTokenById(ConfirmationTokens updateConfirmationToken, long id);
+    ConfirmationTokensRecord updateConfirmationTokenById(ConfirmationTokensRecord updateConfirmationToken, long id);
 
-    List<ConfirmationTokens> getAllConfirmationToken();
+    List<ConfirmationTokensRecord> getAllConfirmationToken();
 }

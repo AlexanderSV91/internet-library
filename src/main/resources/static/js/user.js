@@ -36,7 +36,7 @@ app.controller("userCtrl", function ($scope, $http) {
 
     $scope.getAllUser = function () {
         $http({
-            url: 'http://localhost:8080/api/user',
+            url: 'http://localhost:8080/api/v1/user',
             method: 'GET'
         }).then(function (response) {
             $scope.users = response.data;
@@ -46,7 +46,7 @@ app.controller("userCtrl", function ($scope, $http) {
 
     $scope.deleteUserByIdRequest = function (userId) {
         $http({
-            url: 'http://localhost:8080/api/user/' + userId,
+            url: 'http://localhost:8080/api/v1/user/' + userId,
             method: 'DELETE'
         }).then(function () {
             $scope.getAllUser();
@@ -58,7 +58,7 @@ app.controller("userCtrl", function ($scope, $http) {
         let request = '';
         let method = '';
         if ($scope.editFields.id === 0) {
-            request = 'http://localhost:8080/api/user/';
+            request = 'http://localhost:8080/api/v1/user/';
             method = 'POST';
             data = {
                 userName: $scope.editFields.userName,
@@ -69,7 +69,7 @@ app.controller("userCtrl", function ($scope, $http) {
                 age: $scope.editFields.age,
             };
         } else {
-            request = 'http://localhost:8080/api/user/' + $scope.editFields.id;
+            request = 'http://localhost:8080/api/v1/user/' + $scope.editFields.id;
             method = 'PUT';
             data = {
                 id: $scope.editFields.id,

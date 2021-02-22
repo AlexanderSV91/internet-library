@@ -19,7 +19,7 @@ app.controller("registrationCtrl", function ($scope, $http) {
             $scope.editFields.firstName !== 'Please provide your first name' &&
             $scope.editFields.password === $scope.editFields.confirmPassword) {
 
-            let request = 'http://localhost:8080/api-public/registration';
+            let request = 'http://localhost:8080/api-public/v1/registration';
             let method = 'POST';
             let data = {
                 userName: $scope.editFields.userName,

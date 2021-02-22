@@ -1,6 +1,5 @@
 package com.faceit.example.service.postgre;
 
-import com.faceit.example.dto.request.postgre.RoleRequest;
 import com.faceit.example.tables.records.RolesRecord;
 
 import java.util.List;
@@ -13,9 +12,9 @@ public interface RoleService {
 
     RolesRecord getRoleById(long id);
 
-    RolesRecord addRole(RoleRequest newRole);
+    RolesRecord addRole(RolesRecord newRole);
 
-    RolesRecord updateRoleById(RoleRequest roleRequest, long id);
+    RolesRecord updateRoleById(RolesRecord updateRole, long id);
 
     void deleteRoleById(long id);
 

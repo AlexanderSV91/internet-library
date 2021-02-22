@@ -1,7 +1,8 @@
 package com.faceit.example.service.postgre;
 
-import com.faceit.example.dto.request.postgre.BookRequest;
 import com.faceit.example.dto.response.postgre.BookResponse;
+import com.faceit.example.model.MyUserDetails;
+import com.faceit.example.tables.records.BooksRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,11 +10,11 @@ public interface BookService {
 
     Page<BookResponse> getAllBooksWithPageable(Pageable pageable);
 
-    BookResponse getBookById(long id);
+    BooksRecord getBookById(long id);
 
-    BookResponse saveBook(BookRequest newBook);
+    BooksRecord saveBook(MyUserDetails userDetails, BooksRecord newBook);
 
-    BookResponse updateBookById(BookRequest updateBook, long id);
+    BooksRecord updateBookById(MyUserDetails userDetails, BooksRecord updateBook, long id);
 
-    void deleteBookById(long id);
+    void deleteBookById(MyUserDetails userDetails, long id);
 }

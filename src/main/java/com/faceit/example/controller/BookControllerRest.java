@@ -3,6 +3,7 @@ package com.faceit.example.controller;
 import com.faceit.example.dto.request.postgre.BookRequest;
 import com.faceit.example.dto.response.postgre.BookResponse;
 import com.faceit.example.mapper.postgre.BookMapper;
+import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.service.postgre.BookService;
 import com.faceit.example.tables.records.BooksRecord;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -20,6 +22,7 @@ import javax.validation.Valid;
 public class BookControllerRest {
 
     private final BookService bookService;
+    private final BookMapper bookMapper;
 
     @GetMapping
     public ResponseEntity<Page<BookResponse>> getAllBooksWithPageable(Pageable pageable) {
@@ -29,26 +32,33 @@ public class BookControllerRest {
 
     @GetMapping("/{id}")
     public ResponseEntity<BookResponse> getBookById(@PathVariable long id) {
-        BookResponse bookResponse = bookService.getBookById(id);
+        BookResponse bookResponse = bookMapper.bookRecordToBookResponse(bookService.getBookById(id));
         return ResponseEntity.status(HttpStatus.OK).body(bookResponse);
     }
 
     @PostMapping
-    public ResponseEntity<BookResponse> saveBook(@Valid @RequestBody BookRequest bookRequest) {
-        BookResponse bookResponse = bookService.saveBook(bookRequest);
+    public ResponseEntity<BookResponse> saveBook(@AuthenticationPrincipal MyUserDetails userDetails,
+                                                 @Valid @RequestBody BookRequest bookRequest) {
+        BooksRecord bookRecord = bookMapper.bookRequestToBookRecord(bookRequest);
+        BookResponse bookResponse = bookMapper.bookRecordToBookResponse(
+                bookService.saveBook(userDetails, bookRecord));
         return ResponseEntity.status(HttpStatus.OK).body(bookResponse);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponse> updateBookById(@RequestBody BookRequest updateBook,
+    public ResponseEntity<BookResponse> updateBookById(@AuthenticationPrincipal MyUserDetails userDetails,
+                                                       @RequestBody BookRequest updateBook,
                                                        @PathVariable long id) {
-        BookResponse bookResponse = bookService.updateBookById(updateBook, id);
+        BooksRecord bookRecord = bookMapper.bookRequestToBookRecord(updateBook);
+        BookResponse bookResponse = bookMapper.bookRecordToBookResponse(
+                bookService.updateBookById(userDetails, bookRecord, id));
         return ResponseEntity.status(HttpStatus.OK).body(bookResponse);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBookById(@PathVariable long id) {
-        bookService.deleteBookById(id);
+    public ResponseEntity<Void> deleteBookById(@AuthenticationPrincipal MyUserDetails userDetails,
+                                               @PathVariable long id) {
+        bookService.deleteBookById(userDetails, id);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

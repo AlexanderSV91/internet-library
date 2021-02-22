@@ -176,6 +176,21 @@
                 </configuration>
             </plugin>
 
+            <!-- Flyway Generator Plugin -->
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>7.5.3</version>
+                <configuration>
+                    <url>${db.url}</url>
+                    <user>${db.usr}</user>
+                    <password>${db.pwd}</password>
+                    <schemas>
+                        <schema>public</schema>
+                    </schemas>
+                </configuration>
+            </plugin>
+
             <!-- Binding Lombok In Mapstruct Generator Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -50,22 +50,21 @@ public class BookRepository {
     public BooksRecord updateBookById(BooksRecord updateBook) {
         return dslContext
                 .update(BOOKS)
-                .set(BOOKS.NAME, updateBook.getName())
-                .set(BOOKS.BOOK_CONDITION, updateBook.getBookCondition())
-                .set(BOOKS.DESCRIPTION, updateBook.getDescription())
+                .set(updateBook)
                 .where(BOOKS.ID.eq(updateBook.getId()))
                 .returning()
                 .fetchOne();
     }
 
     public boolean deleteBookById(long id) {
-        return dslContext.deleteFrom(BOOKS)
+        return dslContext
+                .deleteFrom(BOOKS)
                 .where(BOOKS.ID.eq(id))
                 .execute() == 1;
     }
 
     public long findCountAllBooks() {
-        return dslContext.fetchCount(dslContext.select().from(BOOKS));
+        return dslContext.fetchCount(dslContext.selectFrom(BOOKS));
     }
 
     public boolean existsBookByName(String name) {

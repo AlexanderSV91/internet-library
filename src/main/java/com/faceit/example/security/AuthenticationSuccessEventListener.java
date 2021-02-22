@@ -15,6 +15,6 @@ public class AuthenticationSuccessEventListener
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
-        //loginAttemptService.loginSucceeded(event.getAuthentication().getName());
+        loginAttemptService.loginSucceeded(event.getAuthentication().getName());
     }
 }

@@ -15,6 +15,6 @@ public class AuthenticationFailureListener
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
-        //loginAttemptService.loginFailed(event.getAuthentication().getName());
+        loginAttemptService.loginFailed(event.getAuthentication().getName());
     }
 }

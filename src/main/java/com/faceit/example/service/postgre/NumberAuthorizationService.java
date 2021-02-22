@@ -4,7 +4,9 @@ import com.faceit.example.tables.records.NumberAuthorizationsRecord;
 
 public interface NumberAuthorizationService {
 
-    NumberAuthorizationsRecord getNumberAuthorizationById(long id);
+    NumberAuthorizationsRecord getById(long id);
 
-    NumberAuthorizationsRecord updateNumberAuthorizationById(NumberAuthorizationsRecord numberAuthorization);
+    NumberAuthorizationsRecord save(NumberAuthorizationsRecord numberAuthorization);
+
+    NumberAuthorizationsRecord updateById(NumberAuthorizationsRecord numberAuthorization);
 }

@@ -6,9 +6,6 @@ import com.faceit.example.service.postgre.RoleService;
 import com.faceit.example.service.postgre.UserService;
 import com.faceit.example.tables.records.RolesRecord;
 import com.faceit.example.tables.records.UsersRecord;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,7 +24,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UsersRecord user = userService.findUser(username);
+        UsersRecord user = userService.findUserByUserName(username);
         if (user == null) {
             throw new RuntimeException("exception.couldNotFindUser");
         }

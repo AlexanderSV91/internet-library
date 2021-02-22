@@ -8,7 +8,7 @@ import lombok.Data;
 public class UserResponse {
 
     private long id;
-    private String userName;
+    private String username;
     private String firstName;
     private String lastName;
     private String email;
