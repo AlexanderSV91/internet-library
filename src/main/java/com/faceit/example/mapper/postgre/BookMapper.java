@@ -20,5 +20,5 @@ public interface BookMapper {
     List<BookResponse> booksRecordToBooksResponse(List<BooksRecord> books);
 
     @Mapping(target = "id", ignore = true)
-    BooksRecord updateBookRecordFromBookRequest(BookRequest bookRequest, @MappingTarget BooksRecord book);
+    BooksRecord updateBookRecordFromBookRecord(BooksRecord updateBook, @MappingTarget BooksRecord book);
 }

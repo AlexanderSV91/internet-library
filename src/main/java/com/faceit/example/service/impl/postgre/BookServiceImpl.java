@@ -1,11 +1,15 @@
 package com.faceit.example.service.impl.postgre;
 
-import com.faceit.example.dto.request.postgre.BookRequest;
 import com.faceit.example.dto.response.postgre.BookResponse;
+import com.faceit.example.exception.ApiRequestException;
+import com.faceit.example.exception.ResourceAlreadyExists;
+import com.faceit.example.exception.ResourceNotFoundException;
 import com.faceit.example.mapper.postgre.BookMapper;
+import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.repository.postgre.BookRepository;
 import com.faceit.example.service.postgre.BookService;
 import com.faceit.example.tables.records.BooksRecord;
+import com.faceit.example.util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,35 +35,46 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponse getBookById(long id) {
-        BooksRecord booksRecord = bookRepository.getBookById(id);
-        return bookMapper.bookRecordToBookResponse(booksRecord);
+    public BooksRecord getBookById(long id) {
+        return bookRepository.getBookById(id);
     }
 
     @Override
-    public BookResponse saveBook(BookRequest newBook) {
-        boolean exists = bookRepository.existsBookByName(newBook.getName());
-        if (exists) {
-            throw new RuntimeException("exists name book");
+    public BooksRecord saveBook(MyUserDetails userDetails, BooksRecord newBook) {
+        boolean isEmployee = Utils.isEmployee(userDetails.getRolesRecords());
+        if (isEmployee) {
+            boolean exists = bookRepository.existsBookByName(newBook.getName());
+            if (exists) {
+                throw new ResourceAlreadyExists("name","exception.bookNameExist");
+            }
+            return bookRepository.saveBook(newBook);
+        } else {
+            throw new ApiRequestException("exception.bookNotAdd");
         }
-
-        BooksRecord booksRecord = bookRepository.saveBook(bookMapper.bookRequestToBookRecord(newBook));
-        return bookMapper.bookRecordToBookResponse(booksRecord);
     }
 
     @Override
-    public BookResponse updateBookById(BookRequest updateBook, long id) {
-        BooksRecord bookRecord = bookRepository.getBookById(id);
-        bookMapper.updateBookRecordFromBookRequest(updateBook, bookRecord);
-        BooksRecord booksRecord = bookRepository.updateBookById(bookRecord);
-        return bookMapper.bookRecordToBookResponse(booksRecord);
+    public BooksRecord updateBookById(MyUserDetails userDetails, BooksRecord updateBook, long id) {
+        boolean isEmployee = Utils.isEmployee(userDetails.getRolesRecords());
+        if (isEmployee) {
+            BooksRecord bookRecord = bookRepository.getBookById(id);
+            bookMapper.updateBookRecordFromBookRecord(updateBook, bookRecord);
+            return bookRepository.updateBookById(bookRecord);
+        } else {
+            throw new ResourceNotFoundException("exception.notFound");
+        }
     }
 
     @Override
-    public void deleteBookById(long id) {
-        boolean isDeleted = bookRepository.deleteBookById(id);
-        if (!isDeleted) {
-            throw new RuntimeException("book is not deleted");
+    public void deleteBookById(MyUserDetails userDetails, long id) {
+        boolean isEmployee = Utils.isEmployee(userDetails.getRolesRecords());
+        if (isEmployee) {
+            boolean isDeleted = bookRepository.deleteBookById(id);
+            if (!isDeleted) {
+                throw new ApiRequestException("exception.bookNotDelete");
+            }
+        } else {
+            throw new ApiRequestException("exception.noPermission");
         }
     }
 }
