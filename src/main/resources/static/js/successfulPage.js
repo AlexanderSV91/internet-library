@@ -5,7 +5,8 @@ app.controller("successfulPageCtrl", function ($scope, $http, $location) {
 
     $scope.activateUser = function () {
         let url = $location.absUrl();
-        let token = url.replace('confirm', 'api-public/confirm');
+        let token = url.replace('confirm', 'api-public/v1/confirm');
+        console.log(token);
         $http({
             url: token,
             method: 'GET'

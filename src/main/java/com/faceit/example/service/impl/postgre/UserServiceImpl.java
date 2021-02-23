@@ -13,7 +13,6 @@ import com.faceit.example.tables.records.RolesRecord;
 import com.faceit.example.tables.records.UsersRecord;
 import com.faceit.example.util.Utils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +23,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -43,7 +41,7 @@ public class UserServiceImpl implements UserService {
             users = userRepository.findAll(pageable);
             totalElements = userRepository.findCountAllUsers();
         } else {
-            users = Collections.singletonList(user.getUser());
+            users = Collections.singletonList(userRepository.getUserById(user.getUser().getId()));
             totalElements = 1L;
         }
         return new PageImpl<>(userMapper.usersRecordToUsersResponse(users), pageable, totalElements);
@@ -60,13 +58,10 @@ public class UserServiceImpl implements UserService {
         checkUsername(newUser.getUsername());
         checkEmail(newUser.getEmail());
 
-        log.error(newUser.getId() + "");
         RolesRecord userRole = roleService.findByName("ROLE_USER");
         NumberAuthorizationsRecord numberAuthorizationsRecord = preparingNumberAuthorization();
-        userRepository.save(newUser, numberAuthorizationsRecord, userRole.getId());
-        log.error(newUser.getId() + "");
 
-        return newUser;
+        return userRepository.save(newUser, numberAuthorizationsRecord, userRole.getId());
     }
 
     @Override
@@ -82,10 +77,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public UsersRecord updateUserById(UsersRecord updateUser, long id) {
         UsersRecord userRecord = userRepository.getUserById(id);
-        log.error(userRecord + "");
-        userRepository.updateUser(userMapper.updateUserRecordFromUserRecord(updateUser, userRecord));
-        log.error(userRecord + "");
-        return userRecord;
+        if (updateUser.getPassword() != null && updateUser.getPassword().length() < 30) {
+            updateUser.setPassword(bCryptPasswordEncoder.encode(updateUser.getPassword()));
+        }
+        if (!updateUser.getUsername().equals(userRecord.getUsername())) {
+            checkUsername(updateUser.getUsername());
+        }
+        return userRepository
+                .updateUser(userMapper.updateUserRecordFromUserRecord(updateUser, userRecord));
     }
 
     @Override

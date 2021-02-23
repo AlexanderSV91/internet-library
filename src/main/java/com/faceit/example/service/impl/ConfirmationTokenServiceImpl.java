@@ -84,8 +84,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
         } else {
             throw new ResourceNotFoundException("exception.notFound");
         }
-        confirmationTokenRepository.save(updateConfirmationToken);
-        return updateConfirmationToken;
+        return confirmationTokenRepository.update(updateConfirmationToken);
     }
 
     @Override

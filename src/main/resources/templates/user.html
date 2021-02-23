@@ -50,7 +50,7 @@
                 </th>
             </tr>
             <tr ng-repeat="user in users">
-                <td>{{user.userName}}</td>
+                <td>{{user.username}}</td>
                 <td>{{user.firstName}}</td>
                 <td>{{user.lastName}}</td>
                 <td>{{user.email}}</td>
@@ -87,7 +87,7 @@
                 <div class="input-group">
                     <div class="input-group mb-1">
                         <input type="text" class="form-control" th:placeholder="#{user.username1}"
-                               ng-model="editFields.userName">
+                               ng-model="editFields.username">
                     </div>
                     <div class="input-group mb-2">
                         <input type="password" class="form-control" th:placeholder="#{user.password}"

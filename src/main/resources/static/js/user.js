@@ -5,7 +5,7 @@ app.controller("userCtrl", function ($scope, $http) {
     $scope.users = [];
     $scope.editFields = {
         id: 0,
-        userName: "",
+        username: "",
         firstName: "",
         lastName: "",
         email: "",
@@ -16,7 +16,7 @@ app.controller("userCtrl", function ($scope, $http) {
         $scope.titleModal = titleName;
         if (titleName === "Add User") {
             $scope.editFields.id = 0;
-            $scope.editFields.userName = "";
+            $scope.editFields.username = "";
             $scope.editFields.password = "";
             $scope.editFields.firstName = "";
             $scope.editFields.lastName = "";
@@ -27,7 +27,7 @@ app.controller("userCtrl", function ($scope, $http) {
 
     $scope.fillFieldsModal = function (user) {
         $scope.editFields.id = user.id;
-        $scope.editFields.userName = user.userName;
+        $scope.editFields.username = user.username;
         $scope.editFields.firstName = user.firstName;
         $scope.editFields.lastName = user.lastName;
         $scope.editFields.email = user.email;
@@ -39,7 +39,8 @@ app.controller("userCtrl", function ($scope, $http) {
             url: 'http://localhost:8080/api/v1/user',
             method: 'GET'
         }).then(function (response) {
-            $scope.users = response.data;
+            $scope.users = response.data.content;
+            console.log($scope.users);
         })
     }
     $scope.getAllUser();
@@ -61,7 +62,7 @@ app.controller("userCtrl", function ($scope, $http) {
             request = 'http://localhost:8080/api/v1/user/';
             method = 'POST';
             data = {
-                userName: $scope.editFields.userName,
+                username: $scope.editFields.username,
                 password: $scope.editFields.password,
                 firstName: $scope.editFields.firstName,
                 lastName: $scope.editFields.lastName,
@@ -73,7 +74,7 @@ app.controller("userCtrl", function ($scope, $http) {
             method = 'PUT';
             data = {
                 id: $scope.editFields.id,
-                userName: $scope.editFields.userName,
+                username: $scope.editFields.username,
                 password: $scope.editFields.password,
                 firstName: $scope.editFields.firstName,
                 lastName: $scope.editFields.lastName,

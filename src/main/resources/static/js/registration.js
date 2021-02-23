@@ -2,7 +2,7 @@ var app = angular.module("registrationApp", []);
 app.controller("registrationCtrl", function ($scope, $http) {
     $scope.errors = []
     $scope.editFields = {
-        userName: "",
+        username: "",
         password: "",
         confirmPassword: "",
         firstName: "",
@@ -13,7 +13,7 @@ app.controller("registrationCtrl", function ($scope, $http) {
 
     $scope.saveUser = function () {
         console.log($scope.editFields);
-        if ($scope.editFields.userName !== 'username exists' &&
+        if ($scope.editFields.username !== 'username exists' &&
             $scope.editFields.email !== 'Please provide an email' &&
             $scope.editFields.lastName !== 'Please provide your last name' &&
             $scope.editFields.firstName !== 'Please provide your first name' &&
@@ -22,7 +22,7 @@ app.controller("registrationCtrl", function ($scope, $http) {
             let request = 'http://localhost:8080/api-public/v1/registration';
             let method = 'POST';
             let data = {
-                userName: $scope.editFields.userName,
+                username: $scope.editFields.username,
                 password: $scope.editFields.password,
                 firstName: $scope.editFields.firstName,
                 lastName: $scope.editFields.lastName,
@@ -37,9 +37,9 @@ app.controller("registrationCtrl", function ($scope, $http) {
                 document.location.href = '/';
             }, function errorCallback(response) {
                 console.log('post', response.data);
-                if (response.data.message.userName != null) {
-                    console.log(response.data.message.userName)
-                    $scope.editFields.userName = response.data.message.userName;
+                if (response.data.message.username != null) {
+                    console.log(response.data.message.username)
+                    $scope.editFields.username = response.data.message.username;
                 }
                 if (response.data.message.firstName != null) {
                     $scope.editFields.firstName = response.data.message.firstName;

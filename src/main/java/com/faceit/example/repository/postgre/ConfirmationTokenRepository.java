@@ -30,6 +30,15 @@ public class ConfirmationTokenRepository {
                 .fetchOne();
     }
 
+    public ConfirmationTokensRecord update(ConfirmationTokensRecord confirmationToken) {
+        return dslContext
+                .update(CONFIRMATION_TOKENS)
+                .set(confirmationToken)
+                .where(CONFIRMATION_TOKENS.ID.eq(confirmationToken.getId()))
+                .returning()
+                .fetchOne();
+    }
+
     public boolean existsByToken(String token) {
         return dslContext
                 .fetchExists(
