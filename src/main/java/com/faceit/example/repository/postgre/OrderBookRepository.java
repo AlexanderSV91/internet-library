@@ -2,7 +2,9 @@ package com.faceit.example.repository.postgre;
 
 import com.faceit.example.tables.records.OrderBooksRecord;
 import lombok.RequiredArgsConstructor;
-import org.jooq.*;
+import org.jooq.DSLContext;
+import org.jooq.SortField;
+import org.jooq.TableField;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -11,8 +13,10 @@ import org.springframework.stereotype.Repository;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-import static com.faceit.example.Tables.*;
+import static com.faceit.example.Tables.ORDER_BOOKS;
+import static com.faceit.example.Tables.USERS;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,24 +24,19 @@ public class OrderBookRepository {
 
     private final DSLContext dslContext;
 
-    public Result<Record> getPagingOrderBook(Pageable pageable) {
+    public List<OrderBooksRecord> getPagingOrderBook(Pageable pageable) {
         return dslContext
-                .select()
-                .from(ORDER_BOOKS)
-                .join(USERS)
-                .on(USERS.ID.eq(ORDER_BOOKS.USER_ID))
-                .join(BOOKS)
-                .on(BOOKS.ID.eq(ORDER_BOOKS.BOOK_ID))
+                .selectFrom(ORDER_BOOKS)
                 .orderBy(getSortFields(pageable.getSort()))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
-                .fetch();
+                .fetchInto(OrderBooksRecord.class);
     }
 
     public OrderBooksRecord getOrderBookById(long id) {
         return dslContext
                 .selectFrom(ORDER_BOOKS)
-                .where(ORDER_BOOKS.BOOK_ID.eq(id))
+                .where(ORDER_BOOKS.ID.eq(id))
                 .fetchAny();
     }
 
@@ -65,31 +64,27 @@ public class OrderBookRepository {
                 .execute() == 1;
     }
 
-    public Result<Record> getOrderBookByReaderId(Pageable pageable, long idReader) {
+    public List<OrderBooksRecord> getOrderBookByReaderId(Pageable pageable, long idReader) {
         return dslContext
                 .select()
                 .from(ORDER_BOOKS)
                 .join(USERS)
                 .on(USERS.ID.eq(ORDER_BOOKS.USER_ID))
-                .join(BOOKS)
-                .on(BOOKS.ID.eq(ORDER_BOOKS.BOOK_ID))
                 .where(USERS.ID.eq(idReader))
-                .fetch();
+                .fetchInto(OrderBooksRecord.class);
     }
 
-    public Result<Record> findOrderBooksByUserUserName(Pageable pageable, String username) {
+    public List<OrderBooksRecord> findOrderBooksByUsername(Pageable pageable, String username) {
         return dslContext
                 .select()
                 .from(ORDER_BOOKS)
                 .join(USERS)
                 .on(USERS.ID.eq(ORDER_BOOKS.USER_ID))
-                .join(BOOKS)
-                .on(BOOKS.ID.eq(ORDER_BOOKS.BOOK_ID))
                 .where(USERS.USERNAME.eq(username))
                 .orderBy(getSortFields(pageable.getSort()))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
-                .fetch();
+                .fetchInto(OrderBooksRecord.class);
     }
 
     public long findCountAllBooks() {

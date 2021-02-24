@@ -2,7 +2,6 @@ package com.faceit.example.controller;
 
 import com.faceit.example.dto.request.postgre.OrderBookRequest;
 import com.faceit.example.dto.response.postgre.OrderBookResponse;
-import com.faceit.example.exception.ResourceNotFoundException;
 import com.faceit.example.mapper.postgre.OrderBookMapper;
 import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.model.enumeration.OrderBookStatus;
@@ -11,10 +10,10 @@ import com.faceit.example.tables.records.OrderBooksRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,42 +24,51 @@ public class OrderBookControllerRest {
     private final OrderBookMapper orderBookMapper;
 
     @GetMapping
-    public Page<OrderBookResponse> getOrderBooksByUserUserName(@AuthenticationPrincipal MyUserDetails userDetails,
-                                                               Pageable pageable) {
-        return orderBookService.findOrderBooksByUserUserName(userDetails, pageable);
+    public ResponseEntity<Page<OrderBookResponse>> getOrderBooksByUserUserName(@AuthenticationPrincipal MyUserDetails userDetails,
+                                                                               Pageable pageable) {
+        Page<OrderBookResponse> orderBookResponse = orderBookService.findOrderBooksByUsername(userDetails, pageable);
+        return ResponseEntity.status(HttpStatus.OK).body(orderBookResponse);
     }
 
     @GetMapping("/status")
-    public OrderBookStatus[] getAllStatus() {
-        return orderBookService.getAllStatus();
+    public ResponseEntity<OrderBookStatus[]> getAllStatus() {
+        OrderBookStatus[] status = orderBookService.getAllStatus();
+        return ResponseEntity.status(HttpStatus.OK).body(status);
     }
 
     @GetMapping("/{id}")
-    public OrderBookResponse getAllOrderBookById(@PathVariable long id) {
-        return orderBookMapper.orderBookToOrderBookResponse(orderBookService.getOrderBookById(id));
+    public ResponseEntity<OrderBookResponse> getAllOrderBookById(@PathVariable long id) {
+        OrderBookResponse orderBookResponse = orderBookMapper
+                .orderBookToOrderBookResponse(orderBookService.getOrderBookById(id));
+        return ResponseEntity.status(HttpStatus.OK).body(orderBookResponse);
     }
 
     @GetMapping("/user/{id}")
-    public Page<OrderBookResponse> getOrderBookByReader(Pageable pageable, @PathVariable long id) {
-        return orderBookService.getOrderBookByReaderId(pageable, id);
+    public ResponseEntity<Page<OrderBookResponse>> getOrderBookByReader(Pageable pageable, @PathVariable long id) {
+        Page<OrderBookResponse> orderBookResponse = orderBookService.getOrderBookByReaderId(pageable, id);
+        return ResponseEntity.status(HttpStatus.OK).body(orderBookResponse);
     }
 
     @PostMapping
-    public OrderBookResponse addOrderBook(@RequestBody OrderBookRequest orderBookRequest) {
+    public ResponseEntity<OrderBookResponse> addOrderBook(@RequestBody OrderBookRequest orderBookRequest) {
         OrderBooksRecord orderBook = orderBookMapper.orderBookRequestToOrderBook(orderBookRequest);
-        return orderBookMapper.orderBookToOrderBookResponse(orderBookService.addOrderBook(orderBook));
+        OrderBookResponse orderBookResponse = orderBookMapper
+                .orderBookToOrderBookResponse(orderBookService.addOrderBook(orderBook));
+        return ResponseEntity.status(HttpStatus.OK).body(orderBookResponse);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOrderBookById(@PathVariable long id) {
+    public ResponseEntity<Void> deleteOrderBookById(@PathVariable long id) {
         orderBookService.deleteOrderBookById(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PutMapping("/orderbook/{id}")
-    public OrderBookResponse updateReaderById(@RequestBody OrderBookRequest orderBookRequest,
-                                              @PathVariable Long id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderBookResponse> updateReaderById(@RequestBody OrderBookRequest orderBookRequest,
+                                                              @PathVariable Long id) {
         OrderBooksRecord orderBookRecord = orderBookMapper.orderBookRequestToOrderBook(orderBookRequest);
         OrderBooksRecord orderBook = orderBookService.updateOrderBookById(orderBookRecord, id);
-        return orderBookMapper.orderBookToOrderBookResponse(orderBook);
+        OrderBookResponse orderBookResponse = orderBookMapper.orderBookToOrderBookResponse(orderBook);
+        return ResponseEntity.status(HttpStatus.OK).body(orderBookResponse);
     }
 }

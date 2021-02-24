@@ -7,16 +7,13 @@ import com.faceit.example.mapper.postgre.OrderBookMapper;
 import com.faceit.example.mapper.postgre.UserMapper;
 import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.model.enumeration.OrderBookStatus;
+import com.faceit.example.repository.postgre.BookRepository;
 import com.faceit.example.repository.postgre.OrderBookRepository;
+import com.faceit.example.repository.postgre.UserRepository;
 import com.faceit.example.service.postgre.OrderBookService;
-import com.faceit.example.tables.records.BooksRecord;
 import com.faceit.example.tables.records.OrderBooksRecord;
-import com.faceit.example.tables.records.UsersRecord;
 import com.faceit.example.util.Utils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.jooq.Record;
-import org.jooq.Result;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -26,22 +23,21 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.faceit.example.Tables.*;
-
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderBookServiceImpl implements OrderBookService {
 
     private final OrderBookRepository orderBookRepository;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
     private final OrderBookMapper orderBookMapper;
     private final UserMapper userMapper;
     private final BookMapper bookMapper;
 
     @Override
     public List<OrderBookResponse> getPagingOrderBook(Pageable pageable) {
-        Result<Record> recordResult = orderBookRepository.getPagingOrderBook(pageable);
-        return mapToOrderBookResponse(recordResult);
+        List<OrderBooksRecord> recordResult = orderBookRepository.getPagingOrderBook(pageable);
+        return getOrderBookResponse(recordResult);
     }
 
     @Override
@@ -68,11 +64,10 @@ public class OrderBookServiceImpl implements OrderBookService {
 
     @Override
     public OrderBooksRecord updateOrderBookById(OrderBooksRecord update, long id) {
+        OrderBooksRecord orderBookById = orderBookRepository.getOrderBookById(id);
         OrderBooksRecord orderBooksRecord = orderBookMapper
-                .updateOrderBookFromOrderBook(update, orderBookRepository.getOrderBookById(id));
-        log.error(orderBooksRecord.toString());
-        //return orderBookRepository.updateOrderBookById(orderBooksRecord);
-        return null;
+                .updateOrderBookFromOrderBook(update, orderBookById);
+        return orderBookRepository.updateOrderBookById(orderBooksRecord);
     }
 
     @Override
@@ -85,15 +80,15 @@ public class OrderBookServiceImpl implements OrderBookService {
 
     @Override
     public Page<OrderBookResponse> getOrderBookByReaderId(Pageable pageable, long idReader) {
-        Result<Record> recordResult = orderBookRepository.getOrderBookByReaderId(pageable, idReader);
+        List<OrderBooksRecord> recordResult = orderBookRepository.getOrderBookByReaderId(pageable, idReader);
         long totalElements = orderBookRepository.findCountAllBooksByUserId(idReader);
 
-        List<OrderBookResponse> orderBookResponses = mapToOrderBookResponse(recordResult);
+        List<OrderBookResponse> orderBookResponses = getOrderBookResponse(recordResult);
         return new PageImpl<>(orderBookResponses, pageable, totalElements);
     }
 
     @Override
-    public Page<OrderBookResponse> findOrderBooksByUserUserName(MyUserDetails user, Pageable pageable) {
+    public Page<OrderBookResponse> findOrderBooksByUsername(MyUserDetails user, Pageable pageable) {
         boolean isEmployee = Utils.isEmployee(user.getRolesRecords());
 
         List<OrderBookResponse> orderBookResponses;
@@ -102,9 +97,10 @@ public class OrderBookServiceImpl implements OrderBookService {
             orderBookResponses = getPagingOrderBook(pageable);
             totalElements = orderBookRepository.findCountAllBooks();
         } else {
-            Result<Record> recordResult = orderBookRepository.findOrderBooksByUserUserName(pageable, user.getUsername());
+            List<OrderBooksRecord> orderBooksByUsername =
+                    orderBookRepository.findOrderBooksByUsername(pageable, user.getUsername());
+            orderBookResponses = getOrderBookResponse(orderBooksByUsername);
             totalElements = orderBookRepository.findCountAllBooksByUserId(user.getUser().getId());
-            orderBookResponses = mapToOrderBookResponse(recordResult);
         }
         return new PageImpl<>(orderBookResponses, pageable, totalElements);
     }
@@ -114,21 +110,15 @@ public class OrderBookServiceImpl implements OrderBookService {
         return OrderBookStatus.values();
     }
 
-    private List<OrderBookResponse> mapToOrderBookResponse(Result<Record> recordResult) {
-        return recordResult.stream().map(record -> {
-            OrderBooksRecord orderBooksRecord = record.into(ORDER_BOOKS);
-            UsersRecord usersRecord = record.into(USERS);
-            BooksRecord books = record.into(BOOKS);
-            return OrderBookResponse
-                    .builder()
-                    .id(orderBooksRecord.getId())
-                    .status(OrderBookStatus.valueOf(orderBooksRecord.getStatus()))
-                    .user(userMapper.userRecordToUserResponse(usersRecord))
-                    .book(bookMapper.bookRecordToBookResponse(books))
-                    .note(orderBooksRecord.getNote())
-                    .startDate(orderBooksRecord.getStartDate())
-                    .endDate(orderBooksRecord.getEndDate())
-                    .build();
-        }).collect(Collectors.toList());
+    private List<OrderBookResponse> getOrderBookResponse(List<OrderBooksRecord> orderBooksRecords) {
+        return orderBooksRecords.stream().map(orderBooksRecord -> new OrderBookResponse(
+                orderBooksRecord.getId(),
+                OrderBookStatus.valueOf(orderBooksRecord.getStatus()),
+                userMapper.userRecordToUserResponse(userRepository.getUserById(orderBooksRecord.getUserId())),
+                bookMapper.bookRecordToBookResponse(bookRepository.getBookById(orderBooksRecord.getBookId())),
+                orderBooksRecord.getNote(),
+                orderBooksRecord.getStartDate(),
+                orderBooksRecord.getEndDate()
+        )).collect(Collectors.toList());
     }
 }

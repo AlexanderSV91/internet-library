@@ -154,7 +154,7 @@ app.controller("orderBookCtrl", function ($scope, $http) {
             url: 'http://localhost:8080/api/v1/orderbook/user/' + userId,
             method: 'GET'
         }).then(function (response) {
-            $scope.orderBooks = response.data;
+            $scope.orderBooks = response.data.content;
         })
     }
 
@@ -164,7 +164,6 @@ app.controller("orderBookCtrl", function ($scope, $http) {
             method: 'GET'
         }).then(function (response) {
             $scope.users = response.data.content;
-            console.log($scope.users);
         })
     }
     $scope.getAllUser();

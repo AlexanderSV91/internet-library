@@ -24,7 +24,7 @@ public interface OrderBookService {
 
     Page<OrderBookResponse> getOrderBookByReaderId(Pageable pageable, long idReader);
 
-    Page<OrderBookResponse> findOrderBooksByUserUserName(MyUserDetails user, Pageable pageable);
+    Page<OrderBookResponse> findOrderBooksByUsername(MyUserDetails user, Pageable pageable);
 
     OrderBookStatus[] getAllStatus();
 }
