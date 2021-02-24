@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="#{nav.orderBook}">Книги</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+          href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
+</head>
+<style>@import url("../css/style.css");</style>
+<script src="../js/orderbook.js"></script>
+<body ng-app="orderBookApp" ng-controller="orderBookCtrl">
+<div class="row">
+    <div class="col-11">
+        <nav class="nav nav-pills nav-fill">
+            <a class="nav-item nav-link active disabled" href="http://localhost:8080/orderbook" th:text="#{nav.orderBook}">Order
+                Book</a>
+            <a class="nav-item nav-link" href="http://localhost:8080/book" th:text="#{nav.book}">Book</a>
+            <a class="nav-item nav-link" href="http://localhost:8080/user" th:text="#{nav.user}">User</a>
+        </nav>
+    </div>
+    <div class="col-1">
+        <a class="btn btn-danger" href="http://localhost:8080/logout" role="button">
+            <img
+                    src="https://cdn1.iconfinder.com/data/icons/essentials-pack/96/logout_close_sign_out_exit_access-512.png"
+                    width="20"></a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <table class="table table-striped table-bordered table-hover">
+            <tr>
+                <th th:text="#{orderbook.status}">STATUS</th>
+                <th th:text="#{orderbook.user.username1}">USERNAME</th>
+                <th th:text="#{orderbook.user.firstName}">USER FIRST NAME</th>
+                <th th:text="#{orderbook.user.lastName}">USER LAST NAME</th>
+                <th th:text="#{orderbook.user.age}">USER AGE</th>
+                <th th:text="#{orderbook.book.name}">BOOK NAME</th>
+                <th th:text="#{orderbook.book.bookCondition}">BOOK CONDITION</th>
+                <th th:text="#{orderbook.book.description}">BOOK DESCRIPTION</th>
+                <th th:text="#{orderbook.note}">NOTE</th>
+                <th th:text="#{orderbook.startDate}">START DATE</th>
+                <th th:text="#{orderbook.endDate}">END DATE</th>
+                <th>
+                    <button class="btn btn-primary" ng-click="getAllOrderBook()">
+                        <img
+                                src="http://simpleicon.com/wp-content/uploads/refresh.png"
+                                width="20">
+                    </button>
+                    <button class="btn btn-success" data-toggle="modal" data-target="#modal"
+                            ng-click="changeTitleModal('Add Order Book')">
+                        <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/0/06/OOjs_UI_icon_add.svg"
+                                width="20">
+                    </button>
+                    <button class="btn btn-primary" ng-click="previousPage()">
+                        <
+                    </button>
+                    <label style="font-size:20px">{{pageable.pageNumber}}</label>
+                    <button class="btn btn-primary" ng-click="nextPage()">
+                        >
+                    </button>
+                </th>
+            </tr>
+            <tr ng-repeat="orderBook in orderBooks">
+                <td>{{orderBook.status}}</td>
+                <td>{{orderBook.user.username}}</td>
+                <td>{{orderBook.user.firstName}}</td>
+                <td>{{orderBook.user.lastName}}</td>
+                <td>{{orderBook.user.age}}</td>
+                <td>{{orderBook.book.name}}</td>
+                <td>{{orderBook.book.bookCondition}}</td>
+                <td>{{orderBook.book.description}}</td>
+                <td>{{orderBook.note}}</td>
+                <td>{{orderBook.startDate}}</td>
+                <td>{{orderBook.endDate}}</td>
+                <td>
+                    <button class="btn btn-primary"
+                            ng-click="getAllBookByUserId(orderBook.user.id)">
+                        <img
+                                src="https://cdn2.iconfinder.com/data/icons/ios-7-icons/50/search-512.png"
+                                width="20"></button>
+
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#modal"
+                            ng-click="fillFieldsModal(orderBook); changeTitleModal('Edit Order Book')">
+                        <img
+                                src="https://image.flaticon.com/icons/png/512/84/84380.png"
+                                width="20">
+                    </button>
+                    <button class="btn btn-danger"
+                            ng-click="deleteOrderBookByIdRequest(orderBook.id)">
+                        <img
+                                src="https://image.flaticon.com/icons/png/512/61/61848.png"
+                                width="20">
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="modal" tabindex="-1" role="dialog"
+     aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">{{titleModal}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="statusS"
+                           style="margin-right: 20px; line-height:25px;" th:text="#{orderbook.status}">Status</label>
+                    <div class="input-group mb-1">
+                        <select label="Status" id="statusS" ng-model="editFields.status">
+                            <option ng-repeat="status in orderBookStatuses">{{status}}</option>
+                        </select>
+                    </div>
+                    <label for="userId" th:text="#{orderbook.user.user}">User</label>
+                    <div class="input-group mb-2">
+                        <select label="User" id="userId" ng-model="userStr"
+                                ng-click="fillFieldsModalThanUser()">
+                            <option ng-repeat="user in users"
+                            >{{user.id}} {{user.username}} {{user.firstName}} {{user.lastName}} {{user.age}}</option>
+                        </select>
+                    </div>
+                    <label for="bookId" th:text="#{orderbook.book.book}">Book</label>
+                    <div class="input-group mb-3" style="width: 450px; /*overflow: hidden;*/">
+                        <select label="Book" id="bookId" style="width: inherit;" ng-model="bookStr"
+                                ng-click="fillFieldsModalThanBook()">
+                            <option ng-repeat="book in books"
+                            >{{book.id}} {{book.name}} {{book.bookCondition}} {{book.description}}</option>
+                        </select>
+                    </div>
+                    <div class="input-group mb-4">
+                        <textarea class="form-control" aria-label="With textarea"
+                                  th:placeholder="#{orderbook.note}"
+                                  ng-model="editFields.note"></textarea>
+                    </div>
+                    <div class="input-group mb-5">
+                        <input type="text" class="form-control" th:placeholder="#{orderbook.startDate}"
+                               ng-model="editFields.startDate">
+                    </div>
+                    <div class="input-group mb-6">
+                        <input type="text" class="form-control" th:placeholder="#{orderbook.endDate}"
+                               ng-model="editFields.endDate">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{nav.close}">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        ng-click="saveOrderBook()" th:text="#{nav.save}">Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
