@@ -5,6 +5,7 @@ import com.faceit.example.service.ConfirmationTokenService;
 import com.faceit.example.service.EmailSenderService;
 import com.faceit.example.service.SchedulerService;
 import com.faceit.example.service.postgre.UserService;
+import com.faceit.example.service.redis.TokenRedisService;
 import com.faceit.example.tables.records.ConfirmationTokensRecord;
 import com.faceit.example.tables.records.UsersRecord;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class SchedulerServiceImpl implements SchedulerService {
 
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSenderService emailSenderService;
+    private final TokenRedisService tokenRedisService;
     private final UserService userService;
 
     @Override
@@ -41,11 +43,15 @@ public class SchedulerServiceImpl implements SchedulerService {
                 if (duration.toMinutes() <= 60 && duration.toMinutes() >= 0) {
                     try {
                         UsersRecord userRecord = userService.getUserById(confirmationToken.getUserId());
-                        emailSenderService.sendActiveEmail(userRecord, confirmationToken.getToken());
+                        String token = tokenRedisService.findByKey(confirmationToken.getRedisKey());
+                        if (null != token && !"".equals(token)) {
+                            emailSenderService.sendActiveEmail(userRecord, token);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else if (duration.toMinutes() < 0) {
+                    confirmationToken.setRedisKey("");
                     confirmationToken.setStatus(TokenStatus.EXPIRED.name());
                     confirmationTokenService
                             .updateConfirmationTokenById(confirmationToken, confirmationToken.getId());

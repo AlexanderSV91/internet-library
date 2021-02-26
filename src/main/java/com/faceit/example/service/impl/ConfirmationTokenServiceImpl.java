@@ -6,6 +6,7 @@ import com.faceit.example.repository.postgre.ConfirmationTokenRepository;
 import com.faceit.example.service.ConfirmationTokenService;
 import com.faceit.example.service.EmailSenderService;
 import com.faceit.example.service.postgre.UserService;
+import com.faceit.example.service.redis.TokenRedisService;
 import com.faceit.example.tables.records.ConfirmationTokensRecord;
 import com.faceit.example.tables.records.UsersRecord;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +24,16 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailSenderService emailSenderService;
+    private final TokenRedisService tokenRedisService;
     private final UserService userService;
 
     @Override
     public void addConfirmationToken(UsersRecord newUser) {
         UsersRecord user = userService.addUser(newUser);
-        ConfirmationTokensRecord confirmationToken =
+        ConfirmationTokensRecord tokensRecord =
                 confirmationTokenRepository.save(preparingToConfirmationToken(user.getId()));
         try {
-            emailSenderService.sendActiveEmail(user, confirmationToken.getToken());
+            emailSenderService.sendActiveEmail(user, tokensRecord.getRedisKey());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,10 +51,12 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
                     userService.updateUserById(user, user.getId());
 
                     confirmationToken.setStatus(VERIFIED.name());
+                    confirmationToken.setRedisKey("");
                     updateConfirmationTokenById(confirmationToken, confirmationToken.getId());
                     return VERIFIED;
                 } else {
                     confirmationToken.setStatus(EXPIRED.name());
+                    confirmationToken.setRedisKey("");
                     updateConfirmationTokenById(confirmationToken, confirmationToken.getId());
                     return EXPIRED;
                 }
@@ -72,7 +76,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
     @Override
     public boolean existsByToken(String token) {
-        return confirmationTokenRepository.existsByToken(token);
+        return confirmationTokenRepository.existsByRedisKey(token);
     }
 
     @Override
@@ -99,10 +103,11 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
         confirmationToken.setStatus(PENDING.name());
 
         String token = UUID.randomUUID().toString();
-        while (existsByToken(token)) {
+        while (null != tokenRedisService.findByKey(token)) {
             token = UUID.randomUUID().toString();
         }
-        confirmationToken.setToken(token);
+        confirmationToken.setRedisKey(token);
+        tokenRedisService.save(token, token);
         return confirmationToken;
     }
 }

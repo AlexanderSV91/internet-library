@@ -15,10 +15,10 @@ public class ConfirmationTokenRepository {
 
     private final DSLContext dslContext;
 
-    public ConfirmationTokensRecord findByToken(String token) {
+    public ConfirmationTokensRecord findByToken(String key) {
         return dslContext
                 .selectFrom(CONFIRMATION_TOKENS)
-                .where(CONFIRMATION_TOKENS.TOKEN.eq(token))
+                .where(CONFIRMATION_TOKENS.REDIS_KEY.eq(key))
                 .fetchAny();
     }
 
@@ -39,12 +39,12 @@ public class ConfirmationTokenRepository {
                 .fetchOne();
     }
 
-    public boolean existsByToken(String token) {
+    public boolean existsByRedisKey(String key) {
         return dslContext
                 .fetchExists(
                         dslContext
                                 .selectFrom(CONFIRMATION_TOKENS)
-                                .where(CONFIRMATION_TOKENS.TOKEN.eq(token)));
+                                .where(CONFIRMATION_TOKENS.REDIS_KEY.eq(key)));
     }
 
     public ConfirmationTokensRecord findById(long id) {
