@@ -1,10 +1,14 @@
 package com.faceit.example.service.redis;
 
+import com.faceit.example.model.redis.ConfirmationToken;
+
 public interface TokenRedisService {
 
-    String findByKey(String key);
+    Iterable<ConfirmationToken> findAll();
 
-    void save(String key, String value);
+    ConfirmationToken findByKey(String key);
 
-    void delete(String id);
+    void save(ConfirmationToken value);
+
+    boolean existsById(String id);
 }

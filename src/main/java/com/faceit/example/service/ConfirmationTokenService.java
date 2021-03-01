@@ -12,12 +12,4 @@ public interface ConfirmationTokenService {
     void addConfirmationToken(UsersRecord newUser);
 
     TokenStatus findByToken(String token);
-
-    ConfirmationTokensRecord getConfirmationTokenById(long id);
-
-    boolean existsByToken(String token);
-
-    ConfirmationTokensRecord updateConfirmationTokenById(ConfirmationTokensRecord updateConfirmationToken, long id);
-
-    List<ConfirmationTokensRecord> getAllConfirmationToken();
 }

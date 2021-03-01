@@ -1,28 +1,10 @@
 package com.faceit.example.repository.redis;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import com.faceit.example.model.redis.ConfirmationToken;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.concurrent.TimeUnit;
-
 @Repository
-@RequiredArgsConstructor
-public class TokenRedisRepository {
+public interface TokenRedisRepository extends CrudRepository<ConfirmationToken, String> {
 
-    private final static long TIMEOUT_SECONDS = 900L;
-
-    private final RedisTemplate<String, String> redisTemplate;
-
-    public String findByKey(String key) {
-        return redisTemplate.opsForValue().get(key);
-    }
-
-    public void save(String key, String value) {
-        redisTemplate.opsForValue().set(key, value, TIMEOUT_SECONDS, TimeUnit.SECONDS);
-    }
-
-    public void delete(String id) {
-        redisTemplate.delete(id);
-    }
 }

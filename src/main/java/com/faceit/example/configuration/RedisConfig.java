@@ -12,8 +12,8 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 public class RedisConfig {
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, String> template = new RedisTemplate<>();
+    public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<byte[], byte[]> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         return template;
     }
