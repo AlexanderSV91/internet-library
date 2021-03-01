@@ -2,6 +2,7 @@ package com.faceit.example.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -12,6 +13,11 @@ import java.util.Locale;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
 
     @Bean
     public LocaleResolver localeResolver() {

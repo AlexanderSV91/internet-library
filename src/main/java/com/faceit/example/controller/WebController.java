@@ -21,10 +21,10 @@ public class WebController {
         return "user";
     }
 
-    @GetMapping(value = {"/", "/login"})
+/*    @GetMapping(value = {"/", "/login"})
     public String login() {
         return "login";
-    }
+    }*/
 
     @GetMapping("/registration")
     public String registration() {

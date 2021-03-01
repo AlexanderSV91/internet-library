@@ -1,3 +1,4 @@
+/*
 package com.faceit.example.configuration;
 
 import com.faceit.example.service.impl.UserDetailsServiceImpl;
@@ -71,3 +72,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/**");
     }
 }
+*/
