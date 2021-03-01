@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@RedisHash(value = "confirmation_token", timeToLive = 43_200L)
+@RedisHash(value = "confirmation_token", timeToLive = 1_800L)
 public class ConfirmationToken {
 
     @Id

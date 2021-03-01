@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class SchedulerServiceImpl implements SchedulerService {
 
-    private static final String CRON = "0 0 */1 * * *";
+    private static final String CRON = "0 */20 * * * *";
 
     private final EmailSenderService emailSenderService;
     private final TokenRedisService tokenRedisService;
