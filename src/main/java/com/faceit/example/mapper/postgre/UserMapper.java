@@ -21,8 +21,6 @@ public interface UserMapper {
 
     List<UserResponse> usersRecordToUsersResponse(List<UsersRecord> users);
 
-    @Mappings({
-            @Mapping(target = "enabled", ignore = true),
-            @Mapping(target = "id", ignore = true)})
+    @Mapping(target = "id", ignore = true)
     UsersRecord updateUserRecordFromUserRecord(UsersRecord updateUser, @MappingTarget UsersRecord user);
 }
