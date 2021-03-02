@@ -6,13 +6,11 @@ import com.faceit.example.service.ConfirmationTokenService;
 import com.faceit.example.service.EmailSenderService;
 import com.faceit.example.service.postgre.UserService;
 import com.faceit.example.service.redis.TokenRedisService;
-import com.faceit.example.tables.records.ConfirmationTokensRecord;
 import com.faceit.example.tables.records.UsersRecord;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 import static com.faceit.example.model.enumeration.TokenStatus.*;
