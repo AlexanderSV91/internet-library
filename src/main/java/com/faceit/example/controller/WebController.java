@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class WebController {
 
     @GetMapping("/orderbook")
-    public String index() {
+    public String orderbook() {
         return "orderbook";
     }
 
@@ -21,10 +21,10 @@ public class WebController {
         return "user";
     }
 
-/*    @GetMapping(value = {"/", "/login"})
+    @GetMapping(value = {"/", "/login"})
     public String login() {
         return "login";
-    }*/
+    }
 
     @GetMapping("/registration")
     public String registration() {
@@ -34,5 +34,10 @@ public class WebController {
     @GetMapping("/confirm/**")
     public String confirm() {
         return "successfulPage";
+    }
+
+    @GetMapping("/index")
+    public String index() {
+        return "index";
     }
 }
