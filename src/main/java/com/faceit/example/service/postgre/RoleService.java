@@ -8,7 +8,7 @@ public interface RoleService {
 
     List<RolesRecord> getAllRole();
 
-    List<RolesRecord> getAllRoleByUsername(long userId);
+    List<RolesRecord> getAllRoleByUserId(long userId);
 
     RolesRecord getRoleById(long id);
 

@@ -35,9 +35,4 @@ public class WebController {
     public String confirm() {
         return "successfulPage";
     }
-
-    @GetMapping("/index")
-    public String index() {
-        return "index";
-    }
 }

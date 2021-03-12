@@ -1,10 +1,10 @@
 package com.faceit.example.security.jwt;
 
-import com.faceit.example.configuration.AppProperties;
 import com.faceit.example.dto.LocalUser;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -15,27 +15,27 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class TokenProvider {
 
-    private final AppProperties appProperties;
+    @Value(value = "${app.auth.tokenSecret}")
+    private String tokenSecret;
+    @Value(value = "${app.auth.tokenExpirationMsec}")
+    private long tokenExpirationMsec;
 
     public String createToken(Authentication authentication) {
         LocalUser userPrincipal = (LocalUser) authentication.getPrincipal();
-        log.error(appProperties.getAuth().getTokenSecret());
-        log.error(appProperties.getAuth().getTokenExpirationMsec() + "");
-        log.error(appProperties.getOauth2().getAuthorizedRedirectUris().toString() + "");
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
+        Date expiryDate = new Date(now.getTime() + tokenExpirationMsec);
 
         return Jwts.builder()
                 .setSubject(Long.toString(userPrincipal.getUser().getId()))
                 .setIssuedAt(new Date()).setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+                .signWith(SignatureAlgorithm.HS512, tokenSecret)
                 .compact();
     }
 
     public Long getUserIdFromToken(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(appProperties.getAuth().getTokenSecret())
+                .setSigningKey(tokenSecret)
                 .parseClaimsJws(token)
                 .getBody();
         return Long.parseLong(claims.getSubject());
@@ -44,7 +44,7 @@ public class TokenProvider {
     public boolean validateToken(String authToken) {
         try {
             Jwts.parser()
-                    .setSigningKey(appProperties.getAuth().getTokenSecret())
+                    .setSigningKey(tokenSecret)
                     .parseClaimsJws(authToken);
             return true;
         } catch (SignatureException ex) {

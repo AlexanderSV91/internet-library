@@ -23,7 +23,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<RolesRecord> getAllRoleByUsername(long userId) {
+    public List<RolesRecord> getAllRoleByUserId(long userId) {
         return roleRepository.getAllRoleByUsername(userId);
     }
 

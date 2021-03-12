@@ -1,11 +1,11 @@
 package com.faceit.example.service.impl.postgre;
 
+import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.response.postgre.BookResponse;
 import com.faceit.example.exception.ApiRequestException;
 import com.faceit.example.exception.ResourceAlreadyExists;
 import com.faceit.example.exception.ResourceNotFoundException;
 import com.faceit.example.mapper.postgre.BookMapper;
-import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.repository.postgre.BookRepository;
 import com.faceit.example.service.postgre.BookService;
 import com.faceit.example.tables.records.BooksRecord;
@@ -40,12 +40,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BooksRecord saveBook(MyUserDetails userDetails, BooksRecord newBook) {
-        boolean isEmployee = Utils.isEmployee(userDetails.getRolesRecords());
+    public BooksRecord saveBook(LocalUser userDetails, BooksRecord newBook) {
+        boolean isEmployee = Utils.isEmployee(userDetails.getRoles());
         if (isEmployee) {
             boolean exists = bookRepository.existsBookByName(newBook.getName());
             if (exists) {
-                throw new ResourceAlreadyExists("name","exception.bookNameExist");
+                throw new ResourceAlreadyExists("name", "exception.bookNameExist");
             }
             return bookRepository.saveBook(newBook);
         } else {
@@ -54,8 +54,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BooksRecord updateBookById(MyUserDetails userDetails, BooksRecord updateBook, long id) {
-        boolean isEmployee = Utils.isEmployee(userDetails.getRolesRecords());
+    public BooksRecord updateBookById(LocalUser userDetails, BooksRecord updateBook, long id) {
+        boolean isEmployee = Utils.isEmployee(userDetails.getRoles());
         if (isEmployee) {
             BooksRecord bookRecord = bookRepository.getBookById(id);
             bookMapper.updateBookRecordFromBookRecord(updateBook, bookRecord);
@@ -66,8 +66,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void deleteBookById(MyUserDetails userDetails, long id) {
-        boolean isEmployee = Utils.isEmployee(userDetails.getRolesRecords());
+    public void deleteBookById(LocalUser userDetails, long id) {
+        boolean isEmployee = Utils.isEmployee(userDetails.getRoles());
         if (isEmployee) {
             boolean isDeleted = bookRepository.deleteBookById(id);
             if (!isDeleted) {

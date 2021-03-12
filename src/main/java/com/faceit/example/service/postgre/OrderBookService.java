@@ -1,10 +1,9 @@
 package com.faceit.example.service.postgre;
 
+import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.response.postgre.OrderBookResponse;
-import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.model.enumeration.OrderBookStatus;
 import com.faceit.example.tables.records.OrderBooksRecord;
-import com.faceit.example.tables.records.UsersRecord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,7 +23,7 @@ public interface OrderBookService {
 
     Page<OrderBookResponse> getOrderBookByReaderId(Pageable pageable, long idReader);
 
-    Page<OrderBookResponse> findOrderBooksByUsername(MyUserDetails user, Pageable pageable);
+    Page<OrderBookResponse> findOrderBooksByUsername(LocalUser user, Pageable pageable);
 
     OrderBookStatus[] getAllStatus();
 }

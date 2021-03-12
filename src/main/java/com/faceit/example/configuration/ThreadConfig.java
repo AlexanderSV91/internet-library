@@ -25,26 +25,4 @@ public class ThreadConfig {
         executor.initialize();
         return executor;
     }
-
-    @Bean(name = "threadPoolTaskExecutorParsing")
-    public Executor asyncExecutor1() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(CORE_POOL_SIZE);
-        executor.setMaxPoolSize(MAX_NUM_POOL_SIZE);
-        executor.setQueueCapacity(QUEUE_CAPACITY);
-        executor.setThreadNamePrefix("CustomExecutorParsing::");
-        executor.initialize();
-        return executor;
-    }
-
-    @Bean(name = "threadPoolTaskExecutorTransfer")
-    public Executor asyncExecutor2() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(CORE_POOL_SIZE);
-        executor.setMaxPoolSize(MAX_NUM_POOL_SIZE);
-        executor.setQueueCapacity(QUEUE_CAPACITY);
-        executor.setThreadNamePrefix("CustomExecutorTransfer::");
-        executor.initialize();
-        return executor;
-    }
 }

@@ -3,7 +3,6 @@ package com.faceit.example.util;
 import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.UserInfo;
 import com.faceit.example.exception.ApiException;
-import com.faceit.example.model.SocialProvider;
 import com.faceit.example.tables.records.RolesRecord;
 import com.faceit.example.tables.records.UsersRecord;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,15 +26,6 @@ public class Utils {
         return roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName()))
                 .collect(Collectors.toList());
-    }
-
-    public static SocialProvider toSocialProvider(String providerId) {
-        for (SocialProvider socialProvider : SocialProvider.values()) {
-            if (socialProvider.getProviderType().equals(providerId)) {
-                return socialProvider;
-            }
-        }
-        return SocialProvider.LOCAL;
     }
 
     public static UserInfo buildUserInfo(LocalUser localUser) {
