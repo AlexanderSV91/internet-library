@@ -44,7 +44,7 @@ public class LocalUser extends User implements OAuth2User, OidcUser {
     public static LocalUser create(UsersRecord user, List<RolesRecord> roles, Map<String, Object> attributes,
                                    OidcIdToken idToken, OidcUserInfo userInfo) {
         LocalUser localUser = new LocalUser(
-                user.getEmail(),
+                user.getUsername(),
                 user.getPassword(),
                 user.getEnabled(),
                 true,
