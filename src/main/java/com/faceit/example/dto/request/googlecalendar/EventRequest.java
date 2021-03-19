@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 public class EventRequest {
 
     @JsonProperty("end")
-    private DateTime end;
+    private DateTimeRequest end;
 
     @JsonProperty("start")
-    private DateTime start;
+    private DateTimeRequest start;
 
     @JsonProperty("summary")
     private String summary;

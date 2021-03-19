@@ -1,8 +1,5 @@
 package com.faceit.example.dto.response.googleevent;
 
-import com.faceit.example.configuration.LocalDateTimeCombinedSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,11 +17,7 @@ public class EventResponse {
     private String id;
     private String status;
     private String htmlLink;
-    @JsonSerialize(using = LocalDateTimeCombinedSerializer.LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeCombinedSerializer.LocalDateTimeDeserializer.class)
     private LocalDateTime created;
-    @JsonSerialize(using = LocalDateTimeCombinedSerializer.LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeCombinedSerializer.LocalDateTimeDeserializer.class)
     private LocalDateTime updated;
     private String summary;
     private String description;
