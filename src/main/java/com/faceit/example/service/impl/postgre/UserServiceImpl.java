@@ -1,11 +1,13 @@
 package com.faceit.example.service.impl.postgre;
 
+import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.response.postgre.UserResponse;
 import com.faceit.example.exception.ApiRequestException;
 import com.faceit.example.exception.ResourceAlreadyExists;
 import com.faceit.example.mapper.postgre.UserMapper;
-import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.repository.postgre.UserRepository;
+import com.faceit.example.security.oauth2.user.OAuth2UserInfo;
+import com.faceit.example.security.oauth2.user.OAuth2UserInfoFactory;
 import com.faceit.example.service.postgre.RoleService;
 import com.faceit.example.service.postgre.UserService;
 import com.faceit.example.tables.records.NumberAuthorizationsRecord;
@@ -17,11 +19,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.OidcIdToken;
+import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -33,8 +38,8 @@ public class UserServiceImpl implements UserService {
     private final RoleService roleService;
 
     @Override
-    public Page<UserResponse> getAllUserByUsername(MyUserDetails user, Pageable pageable) {
-        boolean isEmployee = Utils.isEmployee(user.getRolesRecords());
+    public Page<UserResponse> getAllUserByUsername(LocalUser user, Pageable pageable) {
+        boolean isEmployee = Utils.isEmployee(user.getRoles());
         List<UsersRecord> users;
         long totalElements;
         if (isEmployee) {
@@ -65,8 +70,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UsersRecord addUser(MyUserDetails myUserDetails, UsersRecord newUser) {
-        boolean isEmployee = Utils.isEmployee(myUserDetails.getRolesRecords());
+    public UsersRecord addUser(LocalUser myUserDetails, UsersRecord newUser) {
+        boolean isEmployee = Utils.isEmployee(myUserDetails.getRoles());
         if (isEmployee) {
             return addUser(newUser);
         } else {
@@ -88,8 +93,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUserById(MyUserDetails myUserDetails, long id) {
-        boolean isEmployee = Utils.isEmployee(myUserDetails.getRolesRecords());
+    public void deleteUserById(LocalUser myUserDetails, long id) {
+        boolean isEmployee = Utils.isEmployee(myUserDetails.getRoles());
         if (isEmployee) {
             userRepository.deleteById(id);
         } else {
@@ -110,6 +115,37 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public LocalUser processUserRegistration(String registrationId, Map<String, Object> attributes,
+                                             OidcIdToken idToken, OidcUserInfo userInfo) {
+        OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(registrationId, attributes);
+
+        UsersRecord user = findUserByUserName(oAuth2UserInfo.getName());
+        if (user == null) {
+            user = findUserByUserName(oAuth2UserInfo.getId());
+        }
+        if (user == null) {
+            UsersRecord usersRecord = new UsersRecord();
+            if (oAuth2UserInfo.getName() != null && !oAuth2UserInfo.getName().isEmpty()) {
+                usersRecord.setUsername(oAuth2UserInfo.getName());
+            } else {
+                usersRecord.setUsername(oAuth2UserInfo.getId());
+            }
+            if (oAuth2UserInfo.getEmail() != null && !oAuth2UserInfo.getEmail().isEmpty()) {
+                usersRecord.setEmail(oAuth2UserInfo.getEmail());
+            } else {
+                usersRecord.setEmail(oAuth2UserInfo.getId());
+            }
+            usersRecord.setFirstName(oAuth2UserInfo.getId());
+            usersRecord.setLastName(oAuth2UserInfo.getId());
+            usersRecord.setPassword("password");
+            usersRecord.setAge(0);
+            user = addUser(usersRecord);
+        }
+        List<RolesRecord> rolesRecord = roleService.getAllRoleByUserId(user.getId());
+        return LocalUser.create(user, rolesRecord, attributes, idToken, userInfo);
     }
 
     private void checkUsername(String username) {

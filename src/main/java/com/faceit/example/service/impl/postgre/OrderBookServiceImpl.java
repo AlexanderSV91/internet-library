@@ -1,11 +1,11 @@
 package com.faceit.example.service.impl.postgre;
 
+import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.response.postgre.OrderBookResponse;
 import com.faceit.example.exception.ApiRequestException;
 import com.faceit.example.mapper.postgre.BookMapper;
 import com.faceit.example.mapper.postgre.OrderBookMapper;
 import com.faceit.example.mapper.postgre.UserMapper;
-import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.model.enumeration.OrderBookStatus;
 import com.faceit.example.repository.postgre.BookRepository;
 import com.faceit.example.repository.postgre.OrderBookRepository;
@@ -88,8 +88,8 @@ public class OrderBookServiceImpl implements OrderBookService {
     }
 
     @Override
-    public Page<OrderBookResponse> findOrderBooksByUsername(MyUserDetails user, Pageable pageable) {
-        boolean isEmployee = Utils.isEmployee(user.getRolesRecords());
+    public Page<OrderBookResponse> findOrderBooksByUsername(LocalUser user, Pageable pageable) {
+        boolean isEmployee = Utils.isEmployee(user.getRoles());
 
         List<OrderBookResponse> orderBookResponses;
         long totalElements;

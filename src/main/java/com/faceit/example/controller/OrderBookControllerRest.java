@@ -1,9 +1,9 @@
 package com.faceit.example.controller;
 
+import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.request.postgre.OrderBookRequest;
 import com.faceit.example.dto.response.postgre.OrderBookResponse;
 import com.faceit.example.mapper.postgre.OrderBookMapper;
-import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.model.enumeration.OrderBookStatus;
 import com.faceit.example.service.postgre.OrderBookService;
 import com.faceit.example.tables.records.OrderBooksRecord;
@@ -24,7 +24,7 @@ public class OrderBookControllerRest {
     private final OrderBookMapper orderBookMapper;
 
     @GetMapping
-    public ResponseEntity<Page<OrderBookResponse>> getOrderBooksByUserUserName(@AuthenticationPrincipal MyUserDetails userDetails,
+    public ResponseEntity<Page<OrderBookResponse>> getOrderBooksByUserUserName(@AuthenticationPrincipal LocalUser userDetails,
                                                                                Pageable pageable) {
         Page<OrderBookResponse> orderBookResponse = orderBookService.findOrderBooksByUsername(userDetails, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(orderBookResponse);

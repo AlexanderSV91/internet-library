@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class WebController {
 
     @GetMapping("/orderbook")
-    public String index() {
+    public String orderbook() {
         return "orderbook";
     }
 

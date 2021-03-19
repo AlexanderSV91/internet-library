@@ -1,9 +1,9 @@
 package com.faceit.example.controller;
 
+import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.request.postgre.BookRequest;
 import com.faceit.example.dto.response.postgre.BookResponse;
 import com.faceit.example.mapper.postgre.BookMapper;
-import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.service.postgre.BookService;
 import com.faceit.example.tables.records.BooksRecord;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class BookControllerRest {
     }
 
     @PostMapping
-    public ResponseEntity<BookResponse> saveBook(@AuthenticationPrincipal MyUserDetails userDetails,
+    public ResponseEntity<BookResponse> saveBook(@AuthenticationPrincipal LocalUser userDetails,
                                                  @Valid @RequestBody BookRequest bookRequest) {
         BooksRecord bookRecord = bookMapper.bookRequestToBookRecord(bookRequest);
         BookResponse bookResponse = bookMapper.bookRecordToBookResponse(
@@ -46,7 +46,7 @@ public class BookControllerRest {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<BookResponse> updateBookById(@AuthenticationPrincipal MyUserDetails userDetails,
+    public ResponseEntity<BookResponse> updateBookById(@AuthenticationPrincipal LocalUser userDetails,
                                                        @RequestBody BookRequest updateBook,
                                                        @PathVariable long id) {
         BooksRecord bookRecord = bookMapper.bookRequestToBookRecord(updateBook);
@@ -56,7 +56,7 @@ public class BookControllerRest {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBookById(@AuthenticationPrincipal MyUserDetails userDetails,
+    public ResponseEntity<Void> deleteBookById(@AuthenticationPrincipal LocalUser userDetails,
                                                @PathVariable long id) {
         bookService.deleteBookById(userDetails, id);
         return ResponseEntity.status(HttpStatus.OK).build();

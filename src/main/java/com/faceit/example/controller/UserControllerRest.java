@@ -1,9 +1,9 @@
 package com.faceit.example.controller;
 
+import com.faceit.example.dto.LocalUser;
 import com.faceit.example.dto.request.postgre.UserRequest;
 import com.faceit.example.dto.response.postgre.UserResponse;
 import com.faceit.example.mapper.postgre.UserMapper;
-import com.faceit.example.model.MyUserDetails;
 import com.faceit.example.service.postgre.UserService;
 import com.faceit.example.tables.records.UsersRecord;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +25,14 @@ public class UserControllerRest {
     private final UserMapper userMapper;
 
     @GetMapping
-    public ResponseEntity<Page<UserResponse>> getAllUserByUsername(@AuthenticationPrincipal MyUserDetails userDetails,
+    public ResponseEntity<Page<UserResponse>> getAllUserByUsername(@AuthenticationPrincipal LocalUser userDetails,
                                                                    Pageable pageable) {
         Page<UserResponse> users = userService.getAllUserByUsername(userDetails, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
     @GetMapping("/current-user")
-    public ResponseEntity<UserResponse> findUserByUserName(@AuthenticationPrincipal MyUserDetails userDetails) {
+    public ResponseEntity<UserResponse> findUserByUserName(@AuthenticationPrincipal LocalUser userDetails) {
         UserResponse userResponse = userMapper
                 .userRecordToUserResponse(userService.findUserByUserName(userDetails.getUsername()));
         return ResponseEntity.status(HttpStatus.OK).body(userResponse);
@@ -45,7 +45,7 @@ public class UserControllerRest {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> addUser(@AuthenticationPrincipal MyUserDetails userDetails,
+    public ResponseEntity<UserResponse> addUser(@AuthenticationPrincipal LocalUser userDetails,
                                                 @Valid @RequestBody UserRequest userRequest) {
         UsersRecord userRecord = userMapper.userRequestToUserRecord(userRequest);
         UserResponse userResponse = userMapper
@@ -54,7 +54,7 @@ public class UserControllerRest {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(@AuthenticationPrincipal MyUserDetails userDetails,
+    public ResponseEntity<Void> deleteUserById(@AuthenticationPrincipal LocalUser userDetails,
                                                @PathVariable long id) {
         userService.deleteUserById(userDetails, id);
         return ResponseEntity.status(HttpStatus.OK).build();
