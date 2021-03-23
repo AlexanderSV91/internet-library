@@ -1,5 +1,6 @@
 package com.faceit.example.configuration;
 
+import com.google.api.client.json.jackson2.JacksonFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -67,5 +68,10 @@ public class MvcConfig implements WebMvcConfigurer {
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public JacksonFactory jacksonFactory() {
+        return JacksonFactory.getDefaultInstance();
     }
 }

@@ -53,7 +53,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     "Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
         }
 
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl() + "user");
+        String targetUrl = redirectUri.orElse("http://localhost:4200/login");
         String token = tokenProvider.createToken(authentication);
         return UriComponentsBuilder
                 .fromUriString(targetUrl)
