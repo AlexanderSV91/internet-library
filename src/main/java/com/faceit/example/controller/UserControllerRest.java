@@ -6,6 +6,7 @@ import com.faceit.example.dto.response.postgre.UserResponse;
 import com.faceit.example.mapper.postgre.UserMapper;
 import com.faceit.example.service.postgre.UserService;
 import com.faceit.example.tables.records.UsersRecord;
+import com.faceit.example.util.Utils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,11 @@ public class UserControllerRest {
                                                                    Pageable pageable) {
         Page<UserResponse> users = userService.getAllUserByUsername(userDetails, pageable);
         return ResponseEntity.status(HttpStatus.OK).body(users);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal LocalUser userDetails) {
+        return ResponseEntity.ok(Utils.buildUserInfo(userDetails));
     }
 
     @GetMapping("/current-user")
