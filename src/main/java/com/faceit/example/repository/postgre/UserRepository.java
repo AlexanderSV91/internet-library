@@ -106,10 +106,21 @@ public class UserRepository {
     }
 
     public void deleteById(long id) {
-        dslContext
-                .deleteFrom(USERS)
-                .where(USERS.ID.eq(id))
-                .execute();
+        long idNumberAuthorization = getUserById(id).getNumberAuthorizationId();
+        dslContext.transaction(configuration -> {
+            dslContext
+                    .deleteFrom(USERS_ROLES)
+                    .where(USERS_ROLES.USER_ID.eq(id))
+                    .execute();
+            dslContext
+                    .deleteFrom(USERS)
+                    .where(USERS.ID.eq(id))
+                    .execute();
+            dslContext
+                    .deleteFrom(NUMBER_AUTHORIZATIONS)
+                    .where(NUMBER_AUTHORIZATIONS.ID.eq(idNumberAuthorization))
+                    .execute();
+        });
     }
 
     public long findCountAllUsers() {
