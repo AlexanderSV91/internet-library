@@ -15,8 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static com.faceit.example.Tables.ORDER_BOOKS;
-import static com.faceit.example.Tables.USERS;
+import static com.faceit.example.Tables.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -71,6 +70,9 @@ public class OrderBookRepository {
                 .join(USERS)
                 .on(USERS.ID.eq(ORDER_BOOKS.USER_ID))
                 .where(USERS.ID.eq(idReader))
+                .orderBy(getSortFields(pageable.getSort()))
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
                 .fetchInto(OrderBooksRecord.class);
     }
 
