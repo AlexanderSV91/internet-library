@@ -30,8 +30,20 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     @Nullable HttpServletResponse response,
                                     @Nullable FilterChain filterChain) throws ServletException, IOException {
         try {
-            Objects.requireNonNull(request);
-            String jwt = getJwtFromRequest(request);
+            /*UsernamePasswordAuthenticationToken authenticationToken = Optional.ofNullable(request)
+                    .map(httpServletRequest -> httpServletRequest.getHeader("Authorization"))
+                    .filter(StringUtils::hasText)
+                    .filter(s -> s.startsWith("Bearer "))
+                    .map(s -> s.substring(7))
+                    .filter(this.tokenProvider::validateToken)
+                    .map(this.tokenProvider::getUserIdFromToken)
+                    .map(this.userDetailsService::loadUserById)
+                    .map(localUser -> new UsernamePasswordAuthenticationToken(localUser, null, localUser.getAuthorities()))
+                    .orElseThrow(() -> new AccessDeniedException(""));
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);*/
+
+            String jwt = getJwtFromRequest(Objects.requireNonNull(request));
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 Long userId = tokenProvider.getUserIdFromToken(jwt);
                 UserDetails userDetails = userDetailsService.loadUserById(userId);
